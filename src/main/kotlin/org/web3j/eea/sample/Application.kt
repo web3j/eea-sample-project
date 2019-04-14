@@ -14,12 +14,11 @@ package org.web3j.eea.sample
 
 import mu.KotlinLogging
 import org.web3j.crypto.Credentials
-import org.web3j.humanstandardtoken.HumanStandardToken
-import org.web3j.protocol.core.DefaultBlockParameterName
+import org.web3j.generated.HumanStandardToken
 import org.web3j.protocol.eea.Eea
-import org.web3j.protocol.eea.tx.EeaTransactionManager
 import org.web3j.protocol.http.HttpService
-import org.web3j.tx.gas.DefaultGasProvider
+import org.web3j.tx.EeaTransactionManager
+import org.web3j.tx.gas.EeaGasProvider
 import java.math.BigInteger
 
 /**
@@ -49,41 +48,74 @@ import java.math.BigInteger
 
 private val logger = KotlinLogging.logger {}
 
-fun main(args: Array<String>) {
+class Application() {
 
-    val eea = Eea.build(HttpService("http:localhost:22000"))
-    val eea1 = Eea.build(HttpService("http:localhost:22001"))
+    val nodeAlice = Eea.build(HttpService("http:localhost:20000"))
+    val nodeBob = Eea.build(HttpService("http:localhost:20002"))
 
-    val credentials = Credentials
+    val enclaveKeyAlice = "A1aVtMxLCUHmBVHXoZzzBgPbW/wj5axDpW9X8l91SGo="
+    val enclaveKeyBob = "Ko2bVqD+nNlNYL5EE7y3IdOnviftjiizpjRt+HTuFBs="
+
+    val alice = Credentials
         .create("8f2a55949038a9610f50fb23b5883af3b4ecb3c3bb792cbcefbd1542c692be63")
-    val credentials1 = Credentials
-        .create("8f2a55949038a9610f50fb23b5883af3b4ecb3c3bb792cbcefbd1542c692be63")
+    val bob = Credentials
+        .create("c87509a1c067bbde78beb793e6fa76530b6382a4c0241e5e4a9ec0a0f44dc0d3")
 
-    val eeatm = EeaTransactionManager(eea, credentials, "", listOf())
+    val tmAlice = EeaTransactionManager(
+        nodeAlice, alice,
+        2018, enclaveKeyAlice, listOf(enclaveKeyBob)
+    )
 
-    val hst = HumanStandardToken.deploy(
-        eea, eeatm, DefaultGasProvider(),
-        BigInteger.ZERO, "eea_token",
-        BigInteger.ZERO, "EEATKN").send()
+    val tmBob = EeaTransactionManager(
+        nodeBob, bob,
+        2018, enclaveKeyBob, listOf(enclaveKeyAlice)
+    )
 
-    hst.transferEventFlowable(
-        DefaultBlockParameterName.LATEST,
-        DefaultBlockParameterName.LATEST)
-        .subscribe { transfer ->
-            logger.debug("Transfer from {} to {} of value {}",
-                transfer._from, transfer._to, transfer._value)
-        }
+    val tokenAlice: HumanStandardToken
+    val tokenBob: HumanStandardToken
 
-    val hst1 = HumanStandardToken.load(
-        hst.contractAddress, eea1, credentials1, DefaultGasProvider())
+    init {
+        logger.info { "Alice deploying private token for {Alice, Bob}" }
+        tokenAlice = HumanStandardToken.deploy(
+            nodeAlice, tmAlice, EeaGasProvider(BigInteger.valueOf(5000)),
+            BigInteger.TEN, "eea_token",
+            BigInteger.TEN, "EEATKN"
+        ).send()
+        logger.info { "Token deployed at ${tokenAlice.contractAddress} for {Alice, Bob}" }
+        tokenBob = HumanStandardToken.load(
+            tokenAlice.contractAddress,
+            nodeBob, tmBob, EeaGasProvider(BigInteger.valueOf(5000))
+        )
+    }
 
-    hst1.transferEventFlowable(
-        DefaultBlockParameterName.LATEST,
-        DefaultBlockParameterName.LATEST)
-        .subscribe { transfer ->
-            logger.debug("Transfer from {} to {} of value {}",
-                transfer._from, transfer._to, transfer._value)
-        }
+    fun printTokenBalanceViewsToTerminal() {
+        logger.info { "Alice view of tokens:" }
+        val aliceAlice = tokenAlice.balanceOf(alice.address).send()
+        val aliceBob = tokenAlice.balanceOf(bob.address).send()
+        logger.info { "Alice: $aliceAlice" }
+        logger.info { "Bob: $aliceBob" }
+        logger.info { "Bob view of tokens:" }
+        val bobAlice = tokenBob.balanceOf(alice.address).send()
+        val bobBob = tokenBob.balanceOf(bob.address).send()
+        logger.info { "Alice: $bobAlice" }
+        logger.info { "Bob: $bobBob" }
+    }
+}
 
-    hst.transfer(credentials1.address, BigInteger.ZERO)
+fun main() {
+
+    val app = Application()
+
+    app.printTokenBalanceViewsToTerminal()
+
+    logger.info { "Transferring 10 tokens from Alice to Bob" }
+    app.tokenAlice.transfer(app.bob.address, BigInteger.TEN).send()
+
+    app.printTokenBalanceViewsToTerminal()
+
+    logger.info { "Transferring 1 token from Bob to Alice" }
+    app.tokenBob.transfer(app.alice.address, BigInteger.ONE).send()
+
+    app.printTokenBalanceViewsToTerminal()
+
 }
