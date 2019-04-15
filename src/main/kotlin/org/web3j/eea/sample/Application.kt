@@ -14,7 +14,7 @@ package org.web3j.eea.sample
 
 import mu.KotlinLogging
 import org.web3j.crypto.Credentials
-import org.web3j.generated.HumanStandardToken
+import org.web3j.humanstandardtoken.HumanStandardToken
 import org.web3j.protocol.eea.Eea
 import org.web3j.protocol.http.HttpService
 import org.web3j.tx.EeaTransactionManager
@@ -48,7 +48,7 @@ import java.math.BigInteger
 
 private val logger = KotlinLogging.logger {}
 
-class Application() {
+class Application {
 
     val nodeAlice = Eea.build(HttpService("http:localhost:20000"))
     val nodeBob = Eea.build(HttpService("http:localhost:20002"))
