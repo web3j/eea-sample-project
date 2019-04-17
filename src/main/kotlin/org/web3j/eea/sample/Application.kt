@@ -117,5 +117,4 @@ fun main() {
     app.tokenBob.transfer(app.alice.address, BigInteger.ONE).send()
 
     app.printTokenBalanceViewsToTerminal()
-
 }
