@@ -46,8 +46,8 @@ allprojects {
         kotlinOptions.jvmTarget = "1.8"
         dependsOn 'generateContractWrappers'
     }
-    
-    compileTestKotlin { 
+
+    compileTestKotlin {
         kotlinOptions.jvmTarget = "1.8"
         dependsOn 'generateTestContractWrappers'
     }
@@ -78,4 +78,7 @@ allprojects {
             paddedCell() // recommended hack to keep gradle files tidy
         }
     }
+
+    apply plugin: 'application'
+    application { mainClassName = 'org.web3j.eea.sample.ApplicationKt' }
 }
