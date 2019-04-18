@@ -1,5 +1,8 @@
 # EEA Sample Project
-This project provides a simple web3j application that demonstrates the EEA features of web3j connecting to Pantheon in the Private Network.
+The project provides a simple web3j application that demonstrates the EEA features of web3j connecting to Pantheon in the Private Network.
+
+## Functionality
+This application demonstrates a number of core features of web3j and Ethereum through Pantheon nodes:
 
 1.  Connecting to a Pantheon the Ethereum network
 2.  Loading an Ethereum wallet file
@@ -66,6 +69,44 @@ Right clique > Mark Directory As > Unmark Generated Sources Root.
 $ ./gradlew generateContractWrappers
 ```
 
+To execute the application.
+
+!!! important 
+        To execute `./gradlew run` you need to have all the nodes from Pantheon-Quickstart running.
+
+```bash
+$ ./gradlew run
+```
+
+Example Output
+```bash
+11:02:37.221 [main] INFO  org.web3j.eea.sample.Application - Alice deploying private token for {Alice, Bob}
+11:02:38.961 [main] INFO  org.web3j.eea.sample.Application - Token deployed at 0x08ae6fb627eff726705d72e3705746f5353986f2 for {Alice, Bob}
+11:02:38.962 [main] INFO  org.web3j.eea.sample.Application - Alice view of tokens:
+11:02:42.115 [main] INFO  org.web3j.eea.sample.Application - Alice: 10
+11:02:42.115 [main] INFO  org.web3j.eea.sample.Application - Bob: 0
+11:02:42.115 [main] INFO  org.web3j.eea.sample.Application - Bob view of tokens:
+11:02:44.443 [main] INFO  org.web3j.eea.sample.Application - Alice: 10
+11:02:44.444 [main] INFO  org.web3j.eea.sample.Application - Bob: 0
+11:02:44.445 [main] INFO  org.web3j.eea.sample.Application - Transferring 10 tokens from Alice to Bob
+11:02:45.545 [main] INFO  org.web3j.eea.sample.Application - Alice view of tokens:
+11:02:47.687 [main] INFO  org.web3j.eea.sample.Application - Alice: 0
+11:02:47.687 [main] INFO  org.web3j.eea.sample.Application - Bob: 10
+11:02:47.687 [main] INFO  org.web3j.eea.sample.Application - Bob view of tokens:
+11:02:49.848 [main] INFO  org.web3j.eea.sample.Application - Alice: 0
+11:02:49.848 [main] INFO  org.web3j.eea.sample.Application - Bob: 10
+11:02:49.849 [main] INFO  org.web3j.eea.sample.Application - Transferring 1 token from Bob to Alice
+11:02:50.900 [main] INFO  org.web3j.eea.sample.Application - Alice view of tokens:
+11:02:53.003 [main] INFO  org.web3j.eea.sample.Application - Alice: 1
+11:02:53.003 [main] INFO  org.web3j.eea.sample.Application - Bob: 9
+11:02:53.003 [main] INFO  org.web3j.eea.sample.Application - Bob view of tokens:
+11:02:57.098 [main] INFO  org.web3j.eea.sample.Application - Alice: 1
+11:02:57.098 [main] INFO  org.web3j.eea.sample.Application - Bob: 9
+
+BUILD SUCCESSFUL in 22s
+```
+
+## Test
 Execute `./gradlew test`.
 
 !!! important 
@@ -74,6 +115,4 @@ Execute `./gradlew test`.
 ```bash
 $ ./gradlew test
 ```
-
-
 
