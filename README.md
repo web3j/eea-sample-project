@@ -4,11 +4,11 @@ The project provides a simple web3j application that demonstrates the EEA featur
 ## Functionality
 This application demonstrates a number of core features of web3j and Ethereum through Pantheon nodes:
 
-1.  Connecting to a Pantheon the Ethereum network
-2.  Loading an Ethereum wallet file
-3.  Deploying a private token to the network
-4.  Transferring tokens privately between parties on the network
-5.  Viewing events from the point of view of different parties on the network
+1.  Connecting to two Pantheon nodes with private transaction support;
+2.  Loading the credentials associated with those nodes;
+3.  Deploying a private token to the network;
+4.  Transferring tokens privately between parties on the network;
+5.  Viewing the state of the contract from the points of view of different nodes;
 
 
 ## Getting Started
@@ -49,25 +49,10 @@ Access the folder.
 $ cd eea-sample-project/
 ```
 
-Execute `./gradlew generateContractWrappers`.
-It will generate the `HumanStandardToken` injecting this dependency into the project.
-To mark `build` directory as `Unmark Generated Sources Root` . 
-
-Go to build > generated > source > web3j > main > java. 
-```bash
-build/
-├──  generated/ 
-    └──── source/
-            └──── web3j/
-                └──── main/
-                        └──── java/
-``` 
-Right clique > Mark Directory As > Unmark Generated Sources Root.
-
-
 ```bash
 $ ./gradlew generateContractWrappers
 ```
+It will generate the `HumanStandardToken`  smart contract wrapper into the project.
 
 To execute the application.
 
@@ -106,13 +91,22 @@ Example Output
 BUILD SUCCESSFUL in 22s
 ```
 
-## Test
-Execute `./gradlew test`.
+
+## Additional Configuration (Intellij)
 
 !!! important 
-        To execute `./gradlew test` you need to have all the nodes from Pantheon-Quickstart running.
-        
-```bash
-$ ./gradlew test
-```
+        Execute this step only if your IDE is the `Intellij`.
 
+To mark `build` directory as `Mark Generated Sources Root` . 
+
+Go to build > generated > source > web3j > main > java. 
+
+```bash
+build/
+├──  generated/ 
+    └──── source/
+            └──── web3j/
+                └──── main/
+                        └──── java/
+``` 
+Right click > Mark Directory As > Mark Generated Sources Root.
