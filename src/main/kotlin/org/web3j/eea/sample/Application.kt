@@ -16,9 +16,9 @@ import mu.KotlinLogging
 import org.web3j.crypto.Credentials
 import org.web3j.humanstandardtoken.HumanStandardToken
 import org.web3j.protocol.eea.Eea
+import org.web3j.protocol.eea.tx.EeaTransactionManager
+import org.web3j.protocol.eea.tx.gas.EeaGasProvider
 import org.web3j.protocol.http.HttpService
-import org.web3j.tx.EeaTransactionManager
-import org.web3j.tx.gas.EeaGasProvider
 import java.math.BigInteger
 
 /**
