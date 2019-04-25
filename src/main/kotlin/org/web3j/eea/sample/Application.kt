@@ -16,9 +16,9 @@ import mu.KotlinLogging
 import org.web3j.crypto.Credentials
 import org.web3j.humanstandardtoken.HumanStandardToken
 import org.web3j.protocol.eea.Eea
-import org.web3j.protocol.eea.tx.EeaTransactionManager
-import org.web3j.protocol.eea.tx.gas.EeaGasProvider
 import org.web3j.protocol.http.HttpService
+import org.web3j.tx.EeaTransactionManager
+import org.web3j.tx.gas.EeaGasProvider
 import java.math.BigInteger
 
 /**
@@ -35,12 +35,15 @@ import java.math.BigInteger
  * <p>To run this demo, you will need to provide:
  *
  * <ol>
+ *     <li>
+ *         Have <a href="https://solidity.readthedocs.io/en/latest/installing-solidity.html">solc 0.4.25 binaries installed</a>
+ *         On mac for instance use <pre>brew install solidity@4</pre>
+ *     </li>
  *     <li>Pantheon client (or node) endpoint. The simplest thing to do is
- *     <a href="https://infura.io/register.html">Use the pantheon/quickstart private dockerized environment</a></li>
- *     <li>A wallet file. This can be generated using the web3j
- *     <a href="https://docs.web3j.io/command_line.html">command line tools</a></li>
- *     <li>Some Ether. This can be requested from the
- *     <a href="https://www.rinkeby.io/#faucet">Rinkeby Faucet</a></li>
+ *        <a href="https://github.com/PegaSysEng/pantheon-quickstart/pull/20">
+ *            Use the pantheon-quickstart private dockerized environment (WIP)
+ *        </a>
+ *     </li>
  * </ol>
  *
  * <p>For further background information, refer to the project README.
