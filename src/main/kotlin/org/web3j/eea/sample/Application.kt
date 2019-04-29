@@ -13,13 +13,25 @@
 package org.web3j.eea.sample
 
 import mu.KotlinLogging
-import org.web3j.crypto.Credentials
+import org.web3j.crypto.*
 import org.web3j.humanstandardtoken.HumanStandardToken
 import org.web3j.protocol.eea.Eea
-import org.web3j.protocol.eea.tx.EeaTransactionManager
-import org.web3j.protocol.eea.tx.gas.EeaGasProvider
+import org.web3j.protocol.eea.crypto.PrivateTransactionEncoder
+import org.web3j.protocol.eea.crypto.RawPrivateTransaction
+//import org.web3j.protocol.eea.tx.EeaTransactionManager
+//import org.web3j.protocol.eea.tx.gas.EeaGasProvider
 import org.web3j.protocol.http.HttpService
+import org.web3j.rlp.RlpEncoder
+import org.web3j.rlp.RlpList
+import org.web3j.rlp.RlpString
+import org.web3j.rlp.RlpType
+import org.web3j.tx.EeaTransactionManager
+import org.web3j.tx.gas.EeaGasProvider
+import org.web3j.utils.Numeric
+import java.lang.RuntimeException
 import java.math.BigInteger
+import java.util.*
+import java.util.stream.Collectors
 
 /**
  * A simple web3j application that demonstrates the EEA features of web3j:
@@ -71,32 +83,53 @@ class Application {
         2018, enclaveKeyBob, listOf(enclaveKeyAlice)
     )
 
-    val tokenAlice: HumanStandardToken
-    val tokenBob: HumanStandardToken
+    var tokenAlice: HumanStandardToken? = null
+    var tokenBob: HumanStandardToken? = null
 
-    init {
+    fun deploy() {
         logger.info { "Alice deploying private token for {Alice, Bob}" }
         tokenAlice = HumanStandardToken.deploy(
             nodeAlice, tmAlice, EeaGasProvider(BigInteger.valueOf(5000)),
             BigInteger.TEN, "eea_token",
             BigInteger.TEN, "EEATKN"
         ).send()
-        logger.info { "Token deployed at ${tokenAlice.contractAddress} for {Alice, Bob}" }
+        logger.info { "Token deployed at ${tokenAlice!!.contractAddress} for {Alice, Bob}" }
+
+
+        // FIXME() remove when priv-65 is merged
+        nodeBob.eeaSendRawTransaction(
+            Numeric.toHexString(PrivateTransactionEncoder.signMessage(
+                RawPrivateTransaction.createTransaction(
+                    BigInteger.ZERO,
+                    BigInteger.valueOf(5000),
+                    BigInteger.valueOf(857230978),
+                    alice.address,
+                    "0x12",
+                    enclaveKeyBob,
+                    Collections.singletonList(enclaveKeyAlice),
+                    "restricted"
+                ), 2018, bob))
+            ).send()
+
         tokenBob = HumanStandardToken.load(
-            tokenAlice.contractAddress,
+            tokenAlice!!.contractAddress,
             nodeBob, tmBob, EeaGasProvider(BigInteger.valueOf(5000))
         )
     }
 
+    init {
+        deploy()
+    }
+
     fun printTokenBalanceViewsToTerminal() {
         logger.info { "Alice view of tokens:" }
-        val aliceAlice = tokenAlice.balanceOf(alice.address).send()
-        val aliceBob = tokenAlice.balanceOf(bob.address).send()
+        val aliceAlice = tokenAlice!!.balanceOf(alice.address).send()
+        val aliceBob = tokenAlice!!.balanceOf(bob.address).send()
         logger.info { "Alice: $aliceAlice" }
         logger.info { "Bob: $aliceBob" }
         logger.info { "Bob view of tokens:" }
-        val bobAlice = tokenBob.balanceOf(alice.address).send()
-        val bobBob = tokenBob.balanceOf(bob.address).send()
+        val bobAlice = tokenBob!!.balanceOf(alice.address).send()
+        val bobBob = tokenBob!!.balanceOf(bob.address).send()
         logger.info { "Alice: $bobAlice" }
         logger.info { "Bob: $bobBob" }
     }
@@ -109,12 +142,12 @@ fun main() {
     app.printTokenBalanceViewsToTerminal()
 
     logger.info { "Transferring 10 tokens from Alice to Bob" }
-    app.tokenAlice.transfer(app.bob.address, BigInteger.TEN).send()
+    app.tokenAlice!!.transfer(app.bob.address, BigInteger.TEN).send()
 
     app.printTokenBalanceViewsToTerminal()
 
     logger.info { "Transferring 1 token from Bob to Alice" }
-    app.tokenBob.transfer(app.alice.address, BigInteger.ONE).send()
+    app.tokenBob!!.transfer(app.alice.address, BigInteger.ONE).send()
 
     app.printTokenBalanceViewsToTerminal()
 }

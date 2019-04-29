@@ -32,10 +32,11 @@ allprojects {
     }
 
     dependencies {
+        compile files('./lib/eea-4.3.0-SNAPSHOT-all.jar')
         compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8",
                 "io.github.microutils:kotlin-logging:$kotlinLoggingVersion",
-                "ch.qos.logback:logback-classic:$logbackVersion",
-                "org.web3j:eea:4.3.0-SNAPSHOT"
+                "ch.qos.logback:logback-classic:$logbackVersion"
+//                "org.web3j:eea:4.3.0-SNAPSHOT"
 
         testCompile "org.junit.jupiter:junit-jupiter-engine:$junitVersion",
                 "com.nhaarman:mockito-kotlin:$mockitoKotlinVersion",
