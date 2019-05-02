@@ -13,25 +13,13 @@
 package org.web3j.eea.sample
 
 import mu.KotlinLogging
-import org.web3j.crypto.*
+import org.web3j.crypto.Credentials
 import org.web3j.humanstandardtoken.HumanStandardToken
 import org.web3j.protocol.eea.Eea
-import org.web3j.protocol.eea.crypto.PrivateTransactionEncoder
-import org.web3j.protocol.eea.crypto.RawPrivateTransaction
-//import org.web3j.protocol.eea.tx.EeaTransactionManager
-//import org.web3j.protocol.eea.tx.gas.EeaGasProvider
 import org.web3j.protocol.http.HttpService
-import org.web3j.rlp.RlpEncoder
-import org.web3j.rlp.RlpList
-import org.web3j.rlp.RlpString
-import org.web3j.rlp.RlpType
 import org.web3j.tx.EeaTransactionManager
 import org.web3j.tx.gas.EeaGasProvider
-import org.web3j.utils.Numeric
-import java.lang.RuntimeException
 import java.math.BigInteger
-import java.util.*
-import java.util.stream.Collectors
 
 /**
  * A simple web3j application that demonstrates the EEA features of web3j:
@@ -89,35 +77,21 @@ class Application {
     fun deploy() {
         logger.info { "Alice deploying private token for {Alice, Bob}" }
         tokenAlice = HumanStandardToken.deploy(
-            nodeAlice, tmAlice, EeaGasProvider(BigInteger.valueOf(5000)),
+            nodeAlice, tmAlice, EeaGasProvider(BigInteger.valueOf(0)),
             BigInteger.TEN, "eea_token",
             BigInteger.TEN, "EEATKN"
         ).send()
         logger.info { "Token deployed at ${tokenAlice!!.contractAddress} for {Alice, Bob}" }
 
-
-        // FIXME() remove when priv-65 is merged
-        nodeBob.eeaSendRawTransaction(
-            Numeric.toHexString(PrivateTransactionEncoder.signMessage(
-                RawPrivateTransaction.createTransaction(
-                    BigInteger.ZERO,
-                    BigInteger.valueOf(5000),
-                    BigInteger.valueOf(857230978),
-                    alice.address,
-                    "0x12",
-                    enclaveKeyBob,
-                    Collections.singletonList(enclaveKeyAlice),
-                    "restricted"
-                ), 2018, bob))
-            ).send()
-
         tokenBob = HumanStandardToken.load(
             tokenAlice!!.contractAddress,
-            nodeBob, tmBob, EeaGasProvider(BigInteger.valueOf(5000))
+            nodeBob, tmBob, EeaGasProvider(BigInteger.valueOf(0))
         )
     }
 
     init {
+        println(alice.address)
+        println(bob.address)
         deploy()
     }
 
