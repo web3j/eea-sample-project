@@ -90,8 +90,6 @@ class Application {
     }
 
     init {
-        println(alice.address)
-        println(bob.address)
         deploy()
     }
 
