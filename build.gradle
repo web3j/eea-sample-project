@@ -36,11 +36,12 @@ allprojects {
         compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8",
                 "io.github.microutils:kotlin-logging:$kotlinLoggingVersion",
                 "ch.qos.logback:logback-classic:$logbackVersion",
-                "org.web3j:eea:4.3.0-SNAPSHOT"
+                "org.web3j:eea:4.3.1-SNAPSHOT"
 
         testCompile "org.junit.jupiter:junit-jupiter-engine:$junitVersion",
                 "com.nhaarman:mockito-kotlin:$mockitoKotlinVersion",
-                "ch.qos.logback:logback-classic:$logbackVersion"
+                "ch.qos.logback:logback-classic:$logbackVersion", 
+                "junit:junit:4.12"
     }
 
     compileKotlin {

@@ -74,32 +74,37 @@ class Application {
         2018, enclaveKeyBob, listOf(enclaveKeyAlice)
     )
 
-    val tokenAlice: HumanStandardToken
-    val tokenBob: HumanStandardToken
+    var tokenAlice: HumanStandardToken? = null
+    var tokenBob: HumanStandardToken? = null
 
-    init {
+    fun deploy() {
         logger.info { "Alice deploying private token for {Alice, Bob}" }
         tokenAlice = HumanStandardToken.deploy(
-            nodeAlice, tmAlice, EeaGasProvider(BigInteger.valueOf(5000)),
+            nodeAlice, tmAlice, EeaGasProvider(BigInteger.valueOf(0)),
             BigInteger.TEN, "eea_token",
             BigInteger.TEN, "EEATKN"
         ).send()
-        logger.info { "Token deployed at ${tokenAlice.contractAddress} for {Alice, Bob}" }
+        logger.info { "Token deployed at ${tokenAlice!!.contractAddress} for {Alice, Bob}" }
+
         tokenBob = HumanStandardToken.load(
-            tokenAlice.contractAddress,
-            nodeBob, tmBob, EeaGasProvider(BigInteger.valueOf(5000))
+            tokenAlice!!.contractAddress,
+            nodeBob, tmBob, EeaGasProvider(BigInteger.valueOf(0))
         )
+    }
+
+    init {
+        deploy()
     }
 
     fun printTokenBalanceViewsToTerminal() {
         logger.info { "Alice view of tokens:" }
-        val aliceAlice = tokenAlice.balanceOf(alice.address).send()
-        val aliceBob = tokenAlice.balanceOf(bob.address).send()
+        val aliceAlice = tokenAlice!!.balanceOf(alice.address).send()
+        val aliceBob = tokenAlice!!.balanceOf(bob.address).send()
         logger.info { "Alice: $aliceAlice" }
         logger.info { "Bob: $aliceBob" }
         logger.info { "Bob view of tokens:" }
-        val bobAlice = tokenBob.balanceOf(alice.address).send()
-        val bobBob = tokenBob.balanceOf(bob.address).send()
+        val bobAlice = tokenBob!!.balanceOf(alice.address).send()
+        val bobBob = tokenBob!!.balanceOf(bob.address).send()
         logger.info { "Alice: $bobAlice" }
         logger.info { "Bob: $bobBob" }
     }
@@ -112,12 +117,12 @@ fun main() {
     app.printTokenBalanceViewsToTerminal()
 
     logger.info { "Transferring 10 tokens from Alice to Bob" }
-    app.tokenAlice.transfer(app.bob.address, BigInteger.TEN).send()
+    app.tokenAlice!!.transfer(app.bob.address, BigInteger.TEN).send()
 
     app.printTokenBalanceViewsToTerminal()
 
     logger.info { "Transferring 1 token from Bob to Alice" }
-    app.tokenBob.transfer(app.alice.address, BigInteger.ONE).send()
+    app.tokenBob!!.transfer(app.alice.address, BigInteger.ONE).send()
 
     app.printTokenBalanceViewsToTerminal()
 }
